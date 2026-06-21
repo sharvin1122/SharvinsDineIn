@@ -1,0 +1,31 @@
+<%- include('partials/header.ejs') %>
+<main class="orders-main">
+  <h1 class="orders-title">Payment Page</h1>
+
+  <div class="orders-container">
+    <div class="order-card">
+      <% if (order.product && order.product.imageString) { %>
+        <img src="data:image/png;base64,<%= order.product.imageString %>" alt="<%= order.product.name %>" class="order-image">
+      <% } else { %>
+        <div class="no-image">No Image</div>
+      <% } %>
+
+      <div class="order-info">
+        <h3><%= order.product ? order.product.name : "Deleted Product" %></h3>
+        <p>Quantity: <%= order.quantity %></p>
+        <p>Total Price: Rs <%= order.totalPrice %></p>
+        <p>Status: <span class="status <%= order.status.toLowerCase() %>"><%= order.status %></span></p>
+      </div>
+
+      <div class="order-actions">
+        <a href="/orders" class="btn btn-warning">Cancel</a>
+        <form action="/orders/<%= order._id %>/confirm" method="POST">
+          <button class="btn btn-success">Confirm Payment</button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<%- include('partials/footer.ejs') %>

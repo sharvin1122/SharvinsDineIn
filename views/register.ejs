@@ -1,0 +1,28 @@
+<%- include('partials/header.ejs') %>
+
+<main class="auth-main">
+  <section class="auth-container">
+    <h1>Register</h1>
+
+    <% if (error) { %>
+      <div class="alert alert-danger"><%= error %></div>
+    <% } %>
+
+    <form action="/register" method="POST">
+      <label class="form-label" for="full_name">Full name</label>
+      <input class="form-control" id="full_name" name="full_name" type="text" required>
+
+      <label class="form-label mt-3" for="email">Email</label>
+      <input class="form-control" id="email" name="email" type="email" required>
+
+      <label class="form-label mt-3" for="password">Password</label>
+      <input class="form-control" id="password" name="password" type="password" minlength="6" required>
+
+      <button class="btn btn-primary w-100 mt-4" type="submit">Create Account</button>
+    </form>
+
+    <p class="auth-switch">Already have an account? <a href="/login">Login</a></p>
+  </section>
+</main>
+
+<%- include('partials/footer.ejs') %>

@@ -1,0 +1,243 @@
+<%- include('partials/header.ejs') %>
+
+<main class="admin-main">
+<div class="container my-5">
+  <h1 class="mb-4 text-center">Admin Dashboard</h1>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-3 col-6">
+      <div class="stat-card">
+        <span>Total Products</span>
+        <strong><%= stats.totalProducts %></strong>
+      </div>
+    </div>
+    <div class="col-md-3 col-6">
+      <div class="stat-card">
+        <span>Total Orders</span>
+        <strong><%= stats.totalOrders %></strong>
+      </div>
+    </div>
+    <div class="col-md-3 col-6">
+      <div class="stat-card">
+        <span>Pending</span>
+        <strong><%= stats.pendingOrders %></strong>
+      </div>
+    </div>
+    <div class="col-md-3 col-6">
+      <div class="stat-card">
+        <span>Sales</span>
+        <strong>Rs <%= stats.totalSales %></strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toggle: Create Product Form -->
+  <div class="d-flex justify-content-center mb-3">
+    <button id="formBtn" class="btn btn-primary" type="button" onclick="toggleSection('formSection','formBtn','+ Create Product','- Hide Form')">
+      + Create Product
+    </button>
+  </div>
+
+  <!-- Create Product Form -->
+  <div id="formSection" class="card card-body mb-4" style="display:none;">
+    <form action="/admin/add" method="POST" enctype="multipart/form-data">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Name</label>
+          <input type="text" name="name" class="form-control" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Category</label>
+          <select name="category" class="form-select">
+            <option value="Food">Food</option>
+            <option value="Beverage">Beverage</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Price</label>
+          <input type="number" name="price" class="form-control" required>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Stock</label>
+          <input type="number" name="stock" class="form-control" value="1" min="1">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Image (optional)</label>
+          <input type="file" name="image" class="form-control" accept="image/*">
+        </div>
+      </div>
+      <div class="mt-3">
+        <button type="submit" class="btn btn-success">Add Product</button>
+      </div>
+    </form>
+  </div>
+
+  <section class="admin-section">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+      <h2 class="section-title">Orders</h2>
+      <span class="section-count"><%= orders.length %> total</span>
+    </div>
+
+    <% if (orders.length > 0) { %>
+      <div class="table-responsive admin-table-wrap">
+        <table class="table align-middle admin-table">
+          <thead>
+            <tr>
+              <th>Customer</th>
+              <th>Item</th>
+              <th>Qty</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Update</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% orders.forEach(order => { %>
+              <tr>
+                <td>
+                  <strong><%= order.user?.full_name || 'Guest' %></strong>
+                  <div class="table-muted"><%= order.user?.email || 'No email' %></div>
+                </td>
+                <td><%= order.product?.name || 'Deleted Product' %></td>
+                <td><%= order.quantity %></td>
+                <td>Rs <%= order.totalPrice %></td>
+                <td>
+                  <span class="status <%= (order.status || '').toLowerCase() %>">
+                    <%= order.status %>
+                  </span>
+                </td>
+                <td><%= order.createdAt ? order.createdAt.toDateString() : '' %></td>
+                <td>
+                  <form action="/admin/orders/<%= order._id %>/status" method="POST" class="status-form">
+                    <select name="status" class="form-select form-select-sm">
+                      <% ['Pending', 'Paid', 'Preparing', 'Ready', 'Completed', 'Canceled'].forEach(status => { %>
+                        <option value="<%= status %>" <%= order.status === status ? 'selected' : '' %>><%= status %></option>
+                      <% }) %>
+                    </select>
+                    <button class="btn btn-primary btn-sm" type="submit">Save</button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } else { %>
+      <div class="empty-panel">No orders yet.</div>
+    <% } %>
+  </section>
+
+  <!-- Toggle: Items Table -->
+  <div class="d-flex justify-content-center mb-3">
+    <button id="tableBtn" class="btn btn-secondary" type="button" onclick="toggleSection('tableSection','tableBtn','+ Show Products','- Hide Products')">
+      + Show Products
+    </button>
+  </div>
+
+  
+  <!-- Items Grid -->
+<div id="tableSection" style="display:none;">
+
+  <div class="row g-4">
+
+    <% if (items.length > 0) { %>
+      <% items.forEach(item => { %>
+
+        <div class="col-md-3">
+
+          <div class="card shadow-sm h-100">
+
+            <% if (item.imageString) { %>
+              <img src="data:image/png;base64,<%= item.imageString %>"
+                   class="card-img-top admin-product-img">
+            <% } else { %>
+              <div class="admin-no-image">
+                No Image
+              </div>
+            <% } %>
+
+            <div class="card-body d-flex flex-column">
+
+              <h6 class="fw-bold mb-1"><%= item.name %></h6>
+              <p class="text-muted mb-1"><%= item.category %></p>
+
+              <p class="mb-1">Price: Rs <%= item.price %></p>
+              <p class="mb-3">Stock: <%= item.stock %></p>
+
+              <div class="admin-card-actions mt-auto">
+                <button class="btn btn-primary btn-sm w-100" type="button" onclick="toggleSection('editProduct<%= item._id %>','editBtn<%= item._id %>','Edit','Hide Edit')" id="editBtn<%= item._id %>">
+                  Edit
+                </button>
+              </div>
+
+              <form action="/admin/delete/<%= item._id %>" method="POST" class="mt-2">
+                <button class="btn btn-danger btn-sm w-100"
+                        onclick="return confirm('Delete this item?')">
+                  Delete
+                </button>
+              </form>
+
+            </div>
+
+            <div id="editProduct<%= item._id %>" class="product-edit-panel" style="display:none;">
+              <form action="/admin/edit/<%= item._id %>" method="POST" enctype="multipart/form-data">
+                <label class="form-label">Name</label>
+                <input type="text" name="name" class="form-control form-control-sm" value="<%= item.name %>" required>
+
+                <label class="form-label mt-2">Category</label>
+                <select name="category" class="form-select form-select-sm">
+                  <% ['Food', 'Beverage'].forEach(option => { %>
+                    <option value="<%= option %>" <%= item.category === option ? 'selected' : '' %>><%= option %></option>
+                  <% }) %>
+                </select>
+
+                <div class="row g-2 mt-1">
+                  <div class="col-6">
+                    <label class="form-label">Price</label>
+                    <input type="number" name="price" class="form-control form-control-sm" min="0" value="<%= item.price %>" required>
+                  </div>
+                  <div class="col-6">
+                    <label class="form-label">Stock</label>
+                    <input type="number" name="stock" class="form-control form-control-sm" min="0" value="<%= item.stock || 0 %>" required>
+                  </div>
+                </div>
+
+                <label class="form-label mt-2">Replace image</label>
+                <input type="file" name="image" class="form-control form-control-sm" accept="image/*">
+
+                <button class="btn btn-success btn-sm w-100 mt-3" type="submit">Save Changes</button>
+              </form>
+            </div>
+
+          </div>
+
+        </div>
+
+      <% }) %>
+    <% } else { %>
+
+      <div class="col-12 text-center">
+        <p>No items yet!</p>
+      </div>
+
+    <% } %>
+
+  </div>
+
+</div>
+
+</div>
+</main>
+
+<script>
+function toggleSection(sectionId, btnId, showText, hideText){
+  const sec = document.getElementById(sectionId);
+  const btn = document.getElementById(btnId);
+  if(sec.style.display==='none'){ sec.style.display='block'; btn.textContent=hideText; }
+  else { sec.style.display='none'; btn.textContent=showText; }
+}
+
+</script>
+
+<%- include('partials/footer') %>

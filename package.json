@@ -1,0 +1,33 @@
+{
+  "name": "sharvinsdinein",
+  "version": "1.0.0",
+  "description": "restaurantordersystem",
+  "main": "server.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sharvin1122/Sharvin-s-Dine-In-Final-Project.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sharvin1122/Sharvin-s-Dine-In-Final-Project/issues"
+  },
+  "homepage": "https://github.com/sharvin1122/Sharvin-s-Dine-In-Final-Project#readme",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "dotenv": "^17.4.2",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-session": "^1.18.2",
+    "mongodb": "^6.19.0",
+    "mongoose": "^8.18.1",
+    "multer": "^2.0.2"
+  }
+}

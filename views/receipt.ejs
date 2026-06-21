@@ -1,0 +1,37 @@
+<%- include('partials/header.ejs') %>
+
+<main class="receipt-main">
+  <section class="receipt-card">
+    <div class="receipt-header">
+      <h1>Payment Receipt</h1>
+      <span class="status <%= (order.status || '').toLowerCase() %>"><%= order.status %></span>
+    </div>
+
+    <div class="receipt-row">
+      <span>Item</span>
+      <strong><%= order.product ? order.product.name : 'Deleted Product' %></strong>
+    </div>
+
+    <div class="receipt-row">
+      <span>Quantity</span>
+      <strong><%= order.quantity %></strong>
+    </div>
+
+    <div class="receipt-row">
+      <span>Total Paid</span>
+      <strong>Rs <%= order.totalPrice %></strong>
+    </div>
+
+    <div class="receipt-row">
+      <span>Date</span>
+      <strong><%= order.createdAt ? order.createdAt.toDateString() : '' %></strong>
+    </div>
+
+    <div class="receipt-actions">
+      <a class="btn btn-primary" href="/orders">View Orders</a>
+      <a class="btn btn-secondary" href="/">Back to Menu</a>
+    </div>
+  </section>
+</main>
+
+<%- include('partials/footer.ejs') %>
