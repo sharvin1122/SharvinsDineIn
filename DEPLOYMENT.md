@@ -26,10 +26,9 @@ SESSION_SECRET=a long random session secret
 ADMIN_EMAIL=demo.admin@sharvinsdinein.com
 ADMIN_PASSWORD=DemoAdmin123!
 HOST=0.0.0.0
-PORT=3001
 ```
 
-Render may provide its own `PORT`. If it does, use the Render value.
+Render provides `PORT` automatically, so it does not need to be added manually.
 
 ## Before Deploying
 

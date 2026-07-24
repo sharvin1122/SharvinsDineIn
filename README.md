@@ -13,7 +13,7 @@ The project has a customer side for browsing the menu, building an order, paying
 * Add mains, combo meals, sides, drinks, coffee, and desserts to the cart
 * Choose add-ons for main items and combo meals
 * Add an order comment before placing the final order
-* Pay for an order
+* Complete a simulated payment
 * Download a receipt
 * Leave a review with a rating
 * Use the app on desktop and mobile
@@ -136,7 +136,6 @@ SESSION_SECRET
 ADMIN_EMAIL
 ADMIN_PASSWORD
 HOST
-PORT
 ```
 
 For deployment, use:
@@ -166,4 +165,4 @@ Do not upload `.env` to GitHub. Add the environment variables inside the hosting
 
 ## Author
 
-Sharvin Puskar Pritvising Chamoo
+Puskar Pritvising Chamoo
