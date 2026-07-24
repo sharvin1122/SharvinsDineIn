@@ -9,10 +9,21 @@
     <div class="orders-container">
 
       <% orders.forEach(order => { %>
+        <% const lines = order.items && order.items.length > 0 ? order.items : [{
+          name: order.product?.name || "Deleted Product",
+          quantity: order.quantity,
+          imageUrl: order.product?.imageUrl || "",
+          addOns: order.addOns || [],
+          lineTotal: order.totalPrice
+        }]; %>
 
         <div class="order-card">
 
-          <% if (order.product && order.product.imageString) { %>
+          <% if (lines[0].imageUrl) { %>
+            <img src="<%= lines[0].imageUrl %>"
+                 alt="<%= lines[0].name %>"
+                 class="order-image">
+          <% } else if (order.product && order.product.imageString) { %>
             <img src="data:image/png;base64,<%= order.product.imageString %>"
                  alt="<%= order.product.name %>"
                  class="order-image">
@@ -21,10 +32,36 @@
           <% } %>
 
           <div class="order-info">
-            <h3><%= order.product?.name || "Deleted Product" %></h3>
+            <h3><%= lines.length > 1 ? 'Meal order' : lines[0].name %></h3>
 
-            <p><strong>Quantity:</strong> <%= order.quantity %></p>
+            <div class="order-lines">
+              <% lines.forEach(line => { %>
+                <div class="order-line">
+                  <strong><%= line.name %></strong>
+                  <small>Qty <%= line.quantity %> · Rs <%= line.lineTotal %></small>
+                  <% if (line.addOns && line.addOns.length > 0) { %>
+                    <div class="mini-addons">
+                      <% line.addOns.forEach(item => { %>
+                        <span>
+                          <% if (item.imageUrl) { %>
+                            <img src="<%= item.imageUrl %>" alt="<%= item.name %>">
+                          <% } %>
+                          <%= item.name %>
+                        </span>
+                      <% }) %>
+                    </div>
+                  <% } %>
+                </div>
+              <% }) %>
+            </div>
             <p><strong>Total:</strong> Rs <%= order.totalPrice %></p>
+
+            <% if (order.comment) { %>
+              <div class="order-comment">
+                <strong>Comment</strong>
+                <span><%= order.comment %></span>
+              </div>
+            <% } %>
 
             <p>
               <strong>Status:</strong>
@@ -34,7 +71,7 @@
             </p>
 
             <p class="order-date">
-              Ordered on: <%= order.createdAt ? order.createdAt.toDateString() : "" %>
+              Ordered: <%= order.createdAt ? order.createdAt.toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' }) : "" %>
             </p>
           </div>
 
@@ -46,6 +83,7 @@
               </form>
             <% } else { %>
               <p class="paid-label">Paid</p>
+              <a class="btn btn-secondary" href="/orders/<%= order._id %>/receipt">Receipt</a>
             <% } %>
 
             <form action="/orders/<%= order._id %>/delete" method="POST">
@@ -65,5 +103,9 @@
   <% } %>
 
 </main>
+
+<script>
+sessionStorage.removeItem('sharvinsCart');
+</script>
 
 <%- include('partials/footer') %>

@@ -1,20 +1,43 @@
 <%- include('partials/header.ejs') %>
+
 <main class="orders-main">
   <h1 class="orders-title">Payment Page</h1>
 
   <div class="orders-container">
-    <div class="order-card">
-      <% if (order.product && order.product.imageString) { %>
-        <img src="data:image/png;base64,<%= order.product.imageString %>" alt="<%= order.product.name %>" class="order-image">
-      <% } else { %>
-        <div class="no-image">No Image</div>
-      <% } %>
-
+    <div class="order-card payment-card">
       <div class="order-info">
-        <h3><%= order.product ? order.product.name : "Deleted Product" %></h3>
-        <p>Quantity: <%= order.quantity %></p>
-        <p>Total Price: Rs <%= order.totalPrice %></p>
-        <p>Status: <span class="status <%= order.status.toLowerCase() %>"><%= order.status %></span></p>
+        <h3><%= orderItems.length > 1 ? 'Your meal order' : orderItems[0].name %></h3>
+
+        <div class="order-lines">
+          <% orderItems.forEach(item => { %>
+            <div class="order-line">
+              <strong><%= item.name %></strong>
+              <small>Qty <%= item.quantity %> - Rs <%= item.lineTotal %></small>
+
+              <% if (item.addOns && item.addOns.length > 0) { %>
+                <div class="mini-addons">
+                  <% item.addOns.forEach(addOn => { %>
+                    <span>
+                      <% if (addOn.imageUrl) { %>
+                        <img src="<%= addOn.imageUrl %>" alt="<%= addOn.name %>">
+                      <% } %>
+                      <%= addOn.name %>
+                    </span>
+                  <% }) %>
+                </div>
+              <% } %>
+            </div>
+          <% }) %>
+        </div>
+
+        <p><strong>Total Price:</strong> Rs <%= order.totalPrice %></p>
+        <% if (order.comment) { %>
+          <div class="order-comment">
+            <strong>Comment</strong>
+            <span><%= order.comment %></span>
+          </div>
+        <% } %>
+        <p><strong>Status:</strong> <span class="status <%= order.status.toLowerCase() %>"><%= order.status %></span></p>
       </div>
 
       <div class="order-actions">
@@ -24,7 +47,6 @@
         </form>
       </div>
     </div>
-
   </div>
 </main>
 

@@ -1,90 +1,481 @@
 <%- include('partials/header.ejs') %>
 
-<main class="container my-5">
+<%
+  const menuItems = (products || []).map(product => ({
+    id: String(product._id),
+    name: product.name,
+    price: product.price,
+    stock: product.stock || 0,
+    category: product.menuCategory || product.category,
+    image: product.imageString ? `data:image/png;base64,${product.imageString}` : (product.imageUrl || product.displayImage || '')
+  }));
 
-  <div class="text-center mb-5">
-    <h1 class="display-5 fw-bold"><%= restaurantName %></h1>
-    <p class="text-muted">Fresh food made with care.</p>
-  </div>
+  const addOnItems = (addOnProducts || []).map(product => ({
+    id: String(product._id),
+    name: product.name,
+    price: product.price,
+    category: product.menuCategory || product.category,
+    image: product.imageString ? `data:image/png;base64,${product.imageString}` : (product.displayImage || product.imageUrl || '')
+  }));
+%>
 
-  <form action="/" method="GET" class="menu-filter">
-    <div class="filter-search">
-      <label class="form-label" for="search">Search menu</label>
-      <input type="search" id="search" name="search" class="form-control" placeholder="Search by item name" value="<%= search || '' %>">
-    </div>
+<main class="menu-page">
+  <section class="menu-hero hero-slider" aria-label="Menu highlights">
+    <button class="hero-arrow hero-prev" type="button" onclick="moveHeroSlide(-1)" aria-label="Previous slide">&lsaquo;</button>
 
-    <div>
-      <label class="form-label" for="category">Category</label>
-      <select id="category" name="category" class="form-select">
-        <% ['All', 'Food', 'Beverage'].forEach(option => { %>
-          <option value="<%= option %>" <%= category === option ? 'selected' : '' %>><%= option %></option>
-        <% }) %>
-      </select>
-    </div>
+    <div class="hero-track" id="heroTrack">
+      <article class="hero-slide active">
+        <div class="hero-copy">
+          <span class="menu-kicker">Fresh combos daily</span>
+          <h1>Build your meal</h1>
+          <p>Choose your main, add a combo, then finish it with golden sides.</p>
+        </div>
+        <div class="hero-image-grid hero-grid-four">
+          <img src="/images/main/1784728668855-cheeseburger.jpg" alt="Chicken burger">
+          <img src="/images/main/1784729074870-spicychick.jpg" alt="Spicy chicken">
+          <img src="/images/combo-meals/chicken-burger-combo.jpg" alt="Chicken combo meal">
+          <img src="/images/sides/fries.jpg" alt="Fries">
+        </div>
+      </article>
 
-    <div class="filter-actions">
-      <button class="btn btn-primary" type="submit">Filter</button>
-      <a class="btn btn-secondary" href="/">Reset</a>
-    </div>
-  </form>
+      <article class="hero-slide">
+        <div class="hero-copy">
+          <span class="menu-kicker">Sweet and chilled</span>
+          <h1>Drinks, coffee and dessert</h1>
+          <p>Add something cold, creamy, warm or sweet to complete your order.</p>
+        </div>
+        <div class="hero-image-grid hero-grid-three">
+          <img src="/images/coffee/cappuccino.jpg" alt="Coffee">
+          <img src="/images/drinks/1784727321500-chocomilkshake.jpg" alt="Milkshake">
+          <img src="/images/dessert/1784727589070-tiramisu.jpg" alt="Dessert">
+        </div>
+      </article>
 
-  <div class="row g-4">
-
-    <% if (products && products.length > 0) { %>
-
-      <% products.forEach(product => { %>
-
-        <div class="col-md-4">
-
-          <div class="card shadow-sm h-100 product-card">
-
-            <% if (product.imageString) { %>
-              <img src="data:image/png;base64,<%= product.imageString %>" class="card-img-top product-img">
-            <% } else { %>
-              <div class="no-image-box">No Image</div>
-            <% } %>
-
-            <div class="card-body d-flex flex-column">
-
-              <h5 class="card-title"><%= product.name %></h5>
-              <p class="text-muted mb-1"><%= product.category %></p>
-              <h6 class="fw-bold">Rs <%= product.price %></h6>
-              <p class="stock-note"><%= product.stock || 0 %> available</p>
-
-              <form action="/orders" method="POST" class="mt-auto">
-
-                <input type="hidden" name="productId" value="<%= product._id %>">
-
-                <input type="number" name="quantity" class="form-control mb-2" min="1" max="<%= product.stock || 1 %>" value="1" <%= (product.stock || 0) <= 0 ? 'disabled' : '' %>>
-
-                <% if ((product.stock || 0) > 0) { %>
-                  <button class="btn btn-success w-100">
-                    Order Now
-                  </button>
-                <% } else { %>
-                  <button class="btn btn-secondary w-100" disabled>
-                    Out of Stock
-                  </button>
-                <% } %>
-
-              </form>
-
+      <article class="hero-slide">
+        <div class="hero-copy">
+          <span class="menu-kicker">Quick access</span>
+          <h1>Save it to your home screen</h1>
+          <p>Open the site from your phone like a normal app whenever you want to order.</p>
+        </div>
+        <div class="home-screen-sample">
+          <div class="phone-sample">
+            <div class="phone-top"></div>
+            <div class="phone-card">
+              <img src="/images/sharvins-logo.svg" alt="Sharvin's Dine In">
+              <strong>Sharvin's Dine In</strong>
+              <span>Tap Share, then Add to Home Screen</span>
             </div>
-
+            <div class="phone-actions">
+              <span>Share</span>
+              <span>Add to Home Screen</span>
+            </div>
           </div>
+        </div>
+      </article>
+    </div>
 
+    <button class="hero-arrow hero-next" type="button" onclick="moveHeroSlide(1)" aria-label="Next slide">&rsaquo;</button>
+    <div class="hero-dots" id="heroDots" aria-label="Slideshow position"></div>
+  </section>
+
+  <section class="menu-shell">
+    <aside class="menu-sidebar">
+      <% ['Main', 'Combo & Meals', 'Sides', 'Drinks', 'Coffee', 'Dessert'].forEach(option => { %>
+        <a href="/menu?category=<%= encodeURIComponent(option) %>&search=<%= encodeURIComponent(search || '') %>" class="menu-tab <%= category === option ? 'active' : '' %>">
+          <span><%= option %></span>
+        </a>
+      <% }) %>
+    </aside>
+
+    <section class="menu-content">
+      <div class="menu-topbar">
+        <div>
+          <h2><%= category %></h2>
+          <p><%= products.length %> items available</p>
         </div>
 
-      <% }) %>
+        <form action="/menu" method="GET" class="menu-search">
+          <input type="hidden" name="category" value="<%= category || 'Main' %>">
+          <input type="search" name="search" placeholder="Search menu" value="<%= search || '' %>">
+          <button type="submit">Search</button>
+        </form>
+      </div>
 
-    <% } else { %>
+      <div class="menu-grid">
+        <% if (products && products.length > 0) { %>
+          <% products.forEach((product, index) => { %>
+            <article class="menu-card">
+              <% if (product.imageString) { %>
+                <img src="data:image/png;base64,<%= product.imageString %>" alt="<%= product.name %>">
+              <% } else if (product.imageUrl) { %>
+                <img src="<%= product.imageUrl %>" alt="<%= product.name %>">
+              <% } else { %>
+                <div class="menu-no-image">No Image</div>
+              <% } %>
 
-      <p class="text-center">No products found.</p>
+              <div class="menu-card-body">
+                <span class="menu-category"><%= product.menuCategory || product.category %></span>
+                <h3><%= product.name %></h3>
+                <p>Rs <%= product.price %></p>
+                <small><%= product.stock || 0 %> available</small>
+              </div>
 
-    <% } %>
+              <% if ((product.stock || 0) > 0) { %>
+                <button class="choose-btn" type="button" onclick="openItemBuilder(<%= index %>)">Choose</button>
+              <% } else { %>
+                <button class="choose-btn disabled" type="button" disabled>Out of stock</button>
+              <% } %>
+            </article>
+          <% }) %>
+        <% } else { %>
+          <div class="empty-panel">No products found.</div>
+        <% } %>
+      </div>
+    </section>
 
+  </section>
+
+  <button class="cart-fab" type="button" onclick="openCartPanel()">
+    <span id="cartCount">0</span>
+    <strong>View cart</strong>
+    <small id="cartFabTotal">Rs 0</small>
+  </button>
+
+  <div class="cart-panel" id="cartPanel" aria-hidden="true">
+    <div class="cart-screen" onclick="closeCartPanel()"></div>
+    <aside class="cart-card">
+      <button class="cart-close" type="button" onclick="closeCartPanel()">x</button>
+      <div>
+        <span class="cart-label">My cart</span>
+        <h2>Your order</h2>
+      </div>
+      <div id="cartList" class="cart-list">
+        <p class="cart-empty">No items added yet.</p>
+      </div>
+      <div class="cart-total-row">
+        <span>Total</span>
+        <strong id="cartTotal">Rs 0</strong>
+      </div>
+      <form action="/orders/cart" method="POST" onsubmit="return sendCartOrder()">
+        <input type="hidden" id="cartData" name="cartData">
+        <label class="cart-comment-label" for="orderComment">Additional comment</label>
+        <textarea id="orderComment" name="orderComment" class="cart-comment" rows="3" maxlength="500"></textarea>
+        <button class="btn btn-success w-100" id="placeOrderBtn" type="submit" disabled>Place final order</button>
+      </form>
+    </aside>
   </div>
 
+  <div class="item-builder" id="itemBuilder" aria-hidden="true">
+    <div class="builder-screen" onclick="closeItemBuilder()"></div>
+    <section class="builder-card" role="dialog" aria-modal="true" aria-labelledby="builderTitle">
+      <button class="builder-close" type="button" onclick="closeItemBuilder()">x</button>
+      <div class="builder-head">
+        <img id="builderImage" alt="">
+        <div>
+          <span id="builderCategory" class="menu-category"></span>
+          <h2 id="builderTitle"></h2>
+          <p id="builderPrice"></p>
+        </div>
+      </div>
+
+      <div class="builder-qty">
+        <span>Quantity</span>
+        <div>
+          <button type="button" onclick="changeBuilderQty(-1)">-</button>
+          <input id="builderQty" type="number" min="1" value="1">
+          <button type="button" onclick="changeBuilderQty(1)">+</button>
+        </div>
+      </div>
+
+      <div id="mainExtras" class="extras-box">
+        <h3>Make it yours</h3>
+        <label><input type="checkbox" value="Spicy" data-price="0"> Spicy</label>
+        <label><input type="checkbox" value="Cheese" data-price="20"> Cheese <small>+ Rs 20</small></label>
+        <label><input type="checkbox" value="Tomato" data-price="10"> Tomato <small>+ Rs 10</small></label>
+        <label><input type="checkbox" value="Extra Patties" data-price="60"> Extra Patties <small>+ Rs 60</small></label>
+      </div>
+
+      <div id="builderAddons" class="builder-addons"></div>
+
+      <div class="builder-footer">
+        <strong id="builderTotal">Rs 0</strong>
+        <button class="btn btn-success" type="button" onclick="addCurrentItemToCart()">Add to cart</button>
+      </div>
+    </section>
+  </div>
 </main>
+
+<script>
+const menuItems = <%- JSON.stringify(menuItems).replace(/</g, '\\u003c') %>;
+const addOnItems = <%- JSON.stringify(addOnItems).replace(/</g, '\\u003c') %>;
+const addonGroups = ['Sides', 'Drinks', 'Coffee', 'Dessert'];
+let cart = loadSavedCart();
+let currentItem = null;
+let heroSlideIndex = 0;
+let heroSlideTimer = null;
+
+function showHeroSlide(index) {
+  const slides = document.querySelectorAll('.hero-slide');
+  const dots = document.querySelectorAll('.hero-dot');
+  if (!slides.length) return;
+
+  heroSlideIndex = (index + slides.length) % slides.length;
+  slides.forEach((slide, slideIndex) => slide.classList.toggle('active', slideIndex === heroSlideIndex));
+  dots.forEach((dot, dotIndex) => dot.classList.toggle('active', dotIndex === heroSlideIndex));
+}
+
+function buildHeroDots() {
+  const dotsBox = document.getElementById('heroDots');
+  const slides = document.querySelectorAll('.hero-slide');
+  if (!dotsBox || !slides.length) return;
+
+  dotsBox.innerHTML = '';
+  slides.forEach((slide, index) => {
+    const dot = document.createElement('button');
+    dot.type = 'button';
+    dot.className = 'hero-dot';
+    dot.setAttribute('aria-label', `Show slide ${index + 1}`);
+    dot.addEventListener('click', () => {
+      showHeroSlide(index);
+      startHeroSlider();
+    });
+    dotsBox.appendChild(dot);
+  });
+}
+
+function moveHeroSlide(amount) {
+  showHeroSlide(heroSlideIndex + amount);
+  startHeroSlider();
+}
+
+function startHeroSlider() {
+  clearInterval(heroSlideTimer);
+  heroSlideTimer = setInterval(() => showHeroSlide(heroSlideIndex + 1), 6500);
+}
+
+function loadSavedCart() {
+  try {
+    const savedCart = JSON.parse(sessionStorage.getItem('sharvinsCart') || '[]');
+    return Array.isArray(savedCart) ? savedCart : [];
+  } catch (err) {
+    return [];
+  }
+}
+
+function saveCart() {
+  sessionStorage.setItem('sharvinsCart', JSON.stringify(cart));
+}
+
+function escapeHtml(value) {
+  return String(value || '').replace(/[&<>"']/g, char => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  }[char]));
+}
+
+function canChooseAddons(item) {
+  return item && (item.category === 'Main' || item.category === 'Combo & Meals');
+}
+
+function openItemBuilder(index) {
+  currentItem = menuItems[index];
+  if (!currentItem) return;
+
+  document.getElementById('builderTitle').textContent = currentItem.name;
+  document.getElementById('builderCategory').textContent = currentItem.category;
+  document.getElementById('builderPrice').textContent = `Rs ${currentItem.price}`;
+  document.getElementById('builderQty').value = 1;
+
+  const image = document.getElementById('builderImage');
+  image.src = currentItem.image || '';
+  image.style.display = currentItem.image ? 'block' : 'none';
+
+  document.querySelectorAll('#mainExtras input').forEach(input => input.checked = false);
+  document.getElementById('mainExtras').style.display = canChooseAddons(currentItem) ? 'grid' : 'none';
+  buildAddonChoices();
+  updateBuilderTotal();
+
+  const builder = document.getElementById('itemBuilder');
+  builder.classList.add('show');
+  builder.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('builder-open');
+}
+
+function closeItemBuilder() {
+  document.getElementById('itemBuilder').classList.remove('show');
+  document.getElementById('itemBuilder').setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('builder-open');
+}
+
+function openCartPanel() {
+  document.getElementById('cartPanel').classList.add('show');
+  document.getElementById('cartPanel').setAttribute('aria-hidden', 'false');
+  document.body.classList.add('builder-open');
+}
+
+function closeCartPanel() {
+  document.getElementById('cartPanel').classList.remove('show');
+  document.getElementById('cartPanel').setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('builder-open');
+}
+
+function buildAddonChoices() {
+  const box = document.getElementById('builderAddons');
+  box.innerHTML = '';
+
+  if (!canChooseAddons(currentItem)) {
+    box.innerHTML = '<p class="builder-note">This item can be added straight to your cart.</p>';
+    return;
+  }
+
+  addonGroups.forEach(group => {
+    const items = addOnItems.filter(item => item.category === group);
+    if (!items.length) return;
+
+    const section = document.createElement('section');
+    section.className = 'builder-addon-group';
+    section.innerHTML = `<h3>${group}</h3>`;
+
+    items.forEach(item => {
+      const label = document.createElement('label');
+      label.className = 'builder-addon-option';
+      const safeName = escapeHtml(item.name);
+      const safeImage = escapeHtml(item.image || '');
+      label.innerHTML = `
+        <input type="checkbox" value="${escapeHtml(item.id)}" data-name="${safeName}" data-price="${Number(item.price || 0)}" data-image="${safeImage}">
+        ${item.image ? `<img src="${safeImage}" alt="${safeName}">` : '<span class="addon-no-image">No Image</span>'}
+        <span><strong>${safeName}</strong><small>Rs ${Number(item.price || 0)}</small></span>
+      `;
+      section.appendChild(label);
+    });
+
+    box.appendChild(section);
+  });
+
+  if (!box.innerHTML) {
+    box.innerHTML = '<p class="builder-note">No add-ons are available right now.</p>';
+  }
+}
+
+function changeBuilderQty(amount) {
+  const qtyInput = document.getElementById('builderQty');
+  const nextQty = Math.max(1, Math.min(currentItem.stock || 1, Number(qtyInput.value || 1) + amount));
+  qtyInput.value = nextQty;
+  updateBuilderTotal();
+}
+
+function selectedAddons() {
+  const addons = [];
+
+  if (!canChooseAddons(currentItem)) {
+    return addons;
+  }
+
+  document.querySelectorAll('#builderAddons input:checked').forEach(input => {
+    addons.push({
+      id: input.value,
+      name: input.dataset.name,
+      price: Number(input.dataset.price || 0),
+      image: input.dataset.image || ''
+    });
+  });
+
+  document.querySelectorAll('#mainExtras input:checked').forEach(input => {
+    addons.push({
+      name: input.value,
+      price: Number(input.dataset.price || 0)
+    });
+  });
+
+  return addons;
+}
+
+function updateBuilderTotal() {
+  if (!currentItem) return;
+  const qty = Number(document.getElementById('builderQty').value || 1);
+  const addonTotal = selectedAddons().reduce((sum, item) => sum + item.price, 0);
+  document.getElementById('builderTotal').textContent = `Rs ${(currentItem.price + addonTotal) * qty}`;
+}
+
+function addCurrentItemToCart() {
+  const qty = Math.max(1, Number(document.getElementById('builderQty').value || 1));
+  const addons = selectedAddons();
+  const addonTotal = addons.reduce((sum, item) => sum + item.price, 0);
+
+  cart.push({
+    productId: currentItem.id,
+    name: currentItem.name,
+    price: currentItem.price,
+    quantity: qty,
+    image: currentItem.image,
+    addOns: addons,
+    total: (currentItem.price + addonTotal) * qty
+  });
+
+  closeItemBuilder();
+  saveCart();
+  renderCart();
+  openCartPanel();
+}
+
+function removeCartItem(index) {
+  cart.splice(index, 1);
+  saveCart();
+  renderCart();
+}
+
+function renderCart() {
+  const list = document.getElementById('cartList');
+  const total = cart.reduce((sum, item) => sum + item.total, 0);
+
+  if (!cart.length) {
+    list.innerHTML = '<p class="cart-empty">No items added yet.</p>';
+  } else {
+    list.innerHTML = cart.map((item, index) => `
+      <div class="cart-line">
+        ${item.image ? `<img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}">` : ''}
+        <div>
+          <strong>${escapeHtml(item.name)}</strong>
+          <small>Qty ${item.quantity}${item.addOns.length ? ` - ${item.addOns.map(addon => escapeHtml(addon.name)).join(', ')}` : ''}</small>
+          <span>Rs ${item.total}</span>
+        </div>
+        <button type="button" onclick="removeCartItem(${index})">x</button>
+      </div>
+    `).join('');
+  }
+
+  document.getElementById('cartTotal').textContent = `Rs ${total}`;
+  document.getElementById('cartFabTotal').textContent = `Rs ${total}`;
+  document.getElementById('cartCount').textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
+  document.getElementById('placeOrderBtn').disabled = cart.length === 0;
+}
+
+function sendCartOrder() {
+  if (!cart.length) return false;
+  const orderCart = cart.map(item => ({
+    productId: item.productId,
+    quantity: item.quantity,
+    addOns: item.addOns.map(addOn => ({
+      id: addOn.id || '',
+      name: addOn.name,
+      price: addOn.price
+    }))
+  }));
+
+  document.getElementById('cartData').value = JSON.stringify(orderCart);
+  return true;
+}
+
+document.getElementById('builderQty').addEventListener('input', updateBuilderTotal);
+document.getElementById('mainExtras').addEventListener('change', updateBuilderTotal);
+document.getElementById('builderAddons').addEventListener('change', updateBuilderTotal);
+buildHeroDots();
+showHeroSlide(0);
+startHeroSlider();
+renderCart();
+</script>
 
 <%- include('partials/footer') %>

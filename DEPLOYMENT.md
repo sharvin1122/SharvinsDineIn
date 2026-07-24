@@ -1,35 +1,47 @@
-# Deploy Sharvin's Dine In
+# Deployment Guide
 
-## Recommended Host
+This project can be deployed on Render.
 
-Use Render for the easiest deployment.
+## Render Settings
 
-## Build Settings
+Build command:
 
-- Build command: `npm install`
-- Start command: `npm start`
+```text
+npm install
+```
+
+Start command:
+
+```text
+npm start
+```
 
 ## Environment Variables
 
-Set these on the hosting platform:
+Add these in the Render dashboard:
 
 ```text
 MONGO_URI=your MongoDB Atlas connection string
-SESSION_SECRET=a long random secret
-ADMIN_EMAIL=your admin email
-ADMIN_PASSWORD=your admin password
+SESSION_SECRET=a long random session secret
+ADMIN_EMAIL=demo.admin@sharvinsdinein.com
+ADMIN_PASSWORD=DemoAdmin123!
 HOST=0.0.0.0
+PORT=3001
 ```
 
-Do not upload your local `.env` file.
+Render may provide its own `PORT`. If it does, use the Render value.
 
-## API Endpoints
+## Before Deploying
 
-- `GET /api/health`
-- `GET /api/products`
-- `GET /api/my-orders` requires login
-- `GET /api/orders` requires admin login
+* Make sure `.env` is not pushed to GitHub.
+* Use a MongoDB Atlas connection string from your own database.
+* Keep only test data in the demo admin account.
+* Do not use real personal or payment information in the live demo.
 
-## Before Going Live
+## Quick Test After Deployment
 
-Change the MongoDB password that was previously written directly in the code.
+* Open the live site.
+* Fill the demo admin login from the login page.
+* Open the admin dashboard.
+* Check products, orders, sales, and reviews.
+* Register a customer account and place one test order.

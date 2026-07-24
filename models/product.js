@@ -12,8 +12,8 @@ const productSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    enum: ["Food", "Beverage"],
-    default: "Food",
+    enum: ["Main", "Combo & Meals", "Sides", "Drinks", "Coffee", "Dessert"],
+    default: "Main",
   },
   price: {
     type: Number,
@@ -26,7 +26,11 @@ const productSchema = new mongoose.Schema({
     min: 0,
   },
   imageString: {
-    type: String, // store base64 string or image URL
+    type: String,
+  },
+  imageUrl: {
+    type: String,
+    trim: true,
   },
   createdAt: {
     type: Date,
@@ -34,5 +38,4 @@ const productSchema = new mongoose.Schema({
   }
 });
 
-// Automatically uses MongoDB's built-in _id (no custom "id" field)
 module.exports = mongoose.model("Product", productSchema);

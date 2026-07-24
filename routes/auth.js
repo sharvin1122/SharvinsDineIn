@@ -7,8 +7,18 @@ function setFlash(req, type, message) {
   req.session.flash = { type, message };
 }
 
+function loginPageData(error = null) {
+  return {
+    error,
+    demoAdmin: {
+      email: process.env.ADMIN_EMAIL || 'demo.admin@sharvinsdinein.com',
+      password: process.env.ADMIN_PASSWORD || 'DemoAdmin123!'
+    }
+  };
+}
+
 router.get('/login', (req, res) => {
-  res.render('login', { error: null });
+  res.render('login', loginPageData());
 });
 
 router.post('/login', async (req, res) => {
@@ -29,21 +39,21 @@ router.post('/login', async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user || !(await bcrypt.compare(password, user.password || ''))) {
-      return res.render('login', { error: 'Invalid email or password' });
+      return res.render('login', loginPageData('Invalid email or password'));
     }
 
     req.session.user = {
-      id: user._id,
+      id: String(user._id),
       email: user.email,
       full_name: user.full_name,
-      perms: user.perms
+      perms: 'user'
     };
 
     setFlash(req, 'success', 'Welcome back.');
     res.redirect('/');
   } catch (err) {
     console.error('Login error:', err);
-    res.render('login', { error: 'Unable to login right now' });
+    res.render('login', loginPageData('Unable to login right now'));
   }
 });
 
@@ -69,10 +79,10 @@ router.post('/register', async (req, res) => {
     });
 
     req.session.user = {
-      id: user._id,
+      id: String(user._id),
       email: user.email,
       full_name: user.full_name,
-      perms: user.perms
+      perms: 'user'
     };
 
     setFlash(req, 'success', 'Account created successfully.');

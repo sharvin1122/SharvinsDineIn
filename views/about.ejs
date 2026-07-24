@@ -1,61 +1,105 @@
 <%- include('partials/header.ejs') %>
 
-<main class="home-main">
-
-  <h1 class="home-title">About Us</h1>
-
-  <section class="about-section">
-
-    <p>
-      Welcome to <strong>Sharvin's Dine In</strong>!  
-      We serve fresh meals with passion and care.  
-      Thank you for visiting us.
-    </p>
-
-    <div class="about-actions">
-      <h3>Contact Us</h3>
-
-      <a href="mailto:yourname@example.com" class="btn btn-primary">
-        Email Us
-      </a>
+<main class="about-main">
+  <section class="about-hero">
+    <div class="about-hero-copy">
+      <span class="menu-kicker">About Sharvin's Dine In</span>
+      <h1>Fresh meals made for easy ordering.</h1>
+      <p>
+        Sharvin's Dine In brings together chicken meals, lamb combos, sides, drinks,
+        coffee and desserts in one simple ordering experience.
+      </p>
+      <div class="about-hero-actions">
+        <a class="btn btn-secondary" href="mailto:yourname@example.com">Contact Us</a>
+      </div>
     </div>
 
-    <div class="about-actions">
-      <h3>Rate Us</h3>
+    <div class="about-photo-stack">
+      <img src="/images/combo-meals/chicken-burger-combo.jpg" alt="Chicken combo meal">
+      <img src="/images/main/1784729074870-spicychick.jpg" alt="Spicy chicken meal">
+      <img src="/images/dessert/1784727589070-tiramisu.jpg" alt="Dessert">
+    </div>
+  </section>
 
-      <div class="stars" id="starRating">
-        <span data-value="1">★</span>
-        <span data-value="2">★</span>
-        <span data-value="3">★</span>
-        <span data-value="4">★</span>
-        <span data-value="5">★</span>
-      </div>
+  <section class="about-values">
+    <article>
+      <span>01</span>
+      <h2>Fresh Choices</h2>
+      <p>Main meals, combos, sides and desserts are organised so customers can order quickly.</p>
+    </article>
+    <article>
+      <span>02</span>
+      <h2>Built For Combos</h2>
+      <p>Customers can add sides, drinks, coffee, dessert and simple meal options before checkout.</p>
+    </article>
+    <article>
+      <span>03</span>
+      <h2>Simple Service</h2>
+      <p>Orders, payment and receipts stay clean, clear and easy to manage.</p>
+    </article>
+  </section>
 
-      <p class="rate-text" id="rateMessage">
-        Click on the stars to rate us!
+  <section class="about-info-grid">
+    <div class="about-panel">
+      <span class="section-eyebrow">What we serve</span>
+      <h2>Chicken, Lamb, Coffee and Dessert in one place.</h2>
+      <p>
+        Our menu is built around fresh, satisfying meals that are easy to customise.
+        From chicken burgers, wraps and crispy sides to lamb combo meals, cold drinks,
+        coffee and desserts, each section is organised so customers can find what they
+        want quickly and build a complete order with confidence.
       </p>
     </div>
 
-  </section>
+    <div class="about-panel rating-panel">
+      <span class="section-eyebrow">Rate your visit</span>
+      <h2>How was your experience?</h2>
 
+      <form action="/about/review" method="POST" class="review-form">
+        <input type="hidden" name="rating" id="ratingInput">
+
+        <div class="stars" id="starRating">
+          <button type="button" data-value="1">★</button>
+          <button type="button" data-value="2">★</button>
+          <button type="button" data-value="3">★</button>
+          <button type="button" data-value="4">★</button>
+          <button type="button" data-value="5">★</button>
+        </div>
+
+        <p class="rate-text" id="rateMessage">Select a rating</p>
+
+        <label class="form-label" for="reviewMessage">Your review</label>
+        <textarea id="reviewMessage" name="message" class="form-control review-box" rows="4" maxlength="700" required></textarea>
+
+        <button class="btn btn-success w-100 mt-3" type="submit">Submit Review</button>
+      </form>
+    </div>
+  </section>
 </main>
 
 <script>
-  const stars = document.querySelectorAll("#starRating span");
-  const message = document.getElementById("rateMessage");
+const stars = document.querySelectorAll('#starRating button');
+const message = document.getElementById('rateMessage');
+const ratingInput = document.getElementById('ratingInput');
+const reviewForm = document.querySelector('.review-form');
 
-  stars.forEach((star, index) => {
-    star.addEventListener("click", () => {
-
-      stars.forEach(s => s.style.color = "#ccc");
-
-      for (let i = 0; i <= index; i++) {
-        stars[i].style.color = "#FFD700";
-      }
-
-      message.textContent = `You rated us ${index + 1} star${index > 0 ? "s" : ""}!`;
+stars.forEach((star, index) => {
+  star.addEventListener('click', () => {
+    stars.forEach((item, itemIndex) => {
+      item.classList.toggle('active', itemIndex <= index);
     });
+
+    ratingInput.value = star.dataset.value;
+    message.textContent = `You rated us ${index + 1} star${index > 0 ? 's' : ''}.`;
   });
+});
+
+reviewForm.addEventListener('submit', event => {
+  if (!ratingInput.value) {
+    event.preventDefault();
+    message.textContent = 'Please select a rating before submitting.';
+  }
+});
 </script>
 
 <%- include('partials/footer') %>

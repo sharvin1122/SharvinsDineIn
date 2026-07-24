@@ -1,0 +1,48 @@
+<%- include('partials/header.ejs') %>
+
+<main class="admin-main">
+  <div class="container my-5">
+    <div class="admin-heading">
+      <div>
+        <span>Customer feedback</span>
+        <h1>Reviews</h1>
+        <p>Read ratings and comments submitted from the About page.</p>
+      </div>
+      <a class="btn btn-secondary" href="/admin">Back to Products & Orders</a>
+    </div>
+
+    <section class="admin-section">
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+        <h2 class="section-title">Customer Reviews</h2>
+        <span class="section-count"><%= reviews.length %> total</span>
+      </div>
+
+      <% if (reviews.length > 0) { %>
+        <div class="review-list">
+          <% reviews.forEach(review => { %>
+            <article class="admin-review-card">
+              <div class="admin-review-top">
+                <div>
+                  <strong><%= review.name || review.user?.full_name || 'Guest' %></strong>
+                  <span><%= review.email || review.user?.email || 'No email' %></span>
+                </div>
+                <div class="review-stars"><%= '★'.repeat(review.rating) %><%= '☆'.repeat(5 - review.rating) %></div>
+              </div>
+              <p><%= review.message %></p>
+              <div class="admin-review-footer">
+                <small><%= review.createdAt ? review.createdAt.toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' }) : '' %></small>
+                <form action="/admin/reviews/<%= review._id %>/delete" method="POST">
+                  <button class="btn btn-danger btn-sm" type="submit" onclick="return confirm('Delete this review?')">Delete</button>
+                </form>
+              </div>
+            </article>
+          <% }) %>
+        </div>
+      <% } else { %>
+        <div class="empty-panel">No reviews yet.</div>
+      <% } %>
+    </section>
+  </div>
+</main>
+
+<%- include('partials/footer.ejs') %>

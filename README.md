@@ -1,132 +1,87 @@
 # Sharvin's Dine In
 
-A full-stack restaurant ordering and management web application built with Node.js, Express, MongoDB, EJS, and Bootstrap.
+Sharvin's Dine In is a full-stack restaurant ordering web app built with Node.js, Express, MongoDB, EJS, Bootstrap, and JavaScript.
 
-The platform allows customers to browse menu items, place orders, view receipts, and manage their accounts, while administrators can manage products, inventory, and customer orders through a secure dashboard.
+The project has a customer side for browsing the menu, building an order, paying, and downloading a receipt. It also has an admin dashboard for managing products, orders, sales, and customer reviews.
 
----
+## Main Features
 
-## Live Features
+### Customers
 
-### Customer Features
+* Register and log in
+* Browse the menu by category
+* Add mains, combo meals, sides, drinks, coffee, and desserts to the cart
+* Choose add-ons for main items and combo meals
+* Add an order comment before placing the final order
+* Pay for an order
+* Download a receipt
+* Leave a review with a rating
+* Use the app on desktop and mobile
 
-* User registration and login
-* Browse restaurant menu
-* Search products
-* Filter by category
-* Add items to order
-* View order history
-* Payment confirmation page
-* Receipt generation
-* Responsive user interface
+### Admin
 
-### Admin Features
+* Demo admin login for project review
+* Create, edit, and delete products
+* Upload product images from the admin dashboard
+* Manage product categories and stock
+* View active orders
+* View paid and completed orders
+* Update order status
+* Track daily, monthly, yearly, and total sales
+* View and delete customer reviews
 
-* Secure admin authentication
-* Product management (Create, Read, Update, Delete)
-* Product image upload
-* Stock management
-* View all customer orders
-* Update order statuses
-* Dashboard overview
+## Demo Access
 
----
+The login page includes demo access for recruiters.
 
-## Screenshots
+```text
+Email: demo.admin@sharvinsdinein.com
+Password: DemoAdmin123!
+```
 
-### Home Page
+This account is only for test data. Do not enter real personal information or real payment details when reviewing the project.
 
-Add screenshot here
+Guest users can also register from the app to test the customer ordering flow.
 
-### Menu Page
-
-Add screenshot here
-
-### Admin Dashboard
-
-Add screenshot here
-
-### Order Management
-
-Add screenshot here
-
----
-
-## Why I Built This Project
-
-This project was developed as part of my Full Stack Web Development learning journey.
-
-The goal was to create a real-world restaurant management application that combines customer ordering functionality with administrative inventory and order management.
-
-During development, I gained practical experience with:
-
-* Authentication and authorization
-* Session management
-* MongoDB database design
-* REST-style routing
-* File uploads using Multer
-* CRUD operations
-* MVC-inspired project structure
-* Deployment preparation
-
----
-
-## Technology Stack
-
-### Backend
+## Tech Stack
 
 * Node.js
 * Express.js
 * MongoDB Atlas
 * Mongoose
-
-### Frontend
-
 * EJS
 * Bootstrap 5
 * JavaScript
-
-### Additional Packages
-
 * bcryptjs
 * express-session
+* connect-mongo
 * multer
 * dotenv
-
----
-
-## API Endpoints
-
-| Method | Endpoint       | Description               |
-| ------ | -------------- | ------------------------- |
-| GET    | /api/health    | API health check          |
-| GET    | /api/products  | Get all products          |
-| GET    | /api/my-orders | Get current user's orders |
-| GET    | /api/orders    | Get all orders (Admin)    |
-
----
 
 ## Project Structure
 
 ```text
-models/        Database models
-routes/        Application routes
-middleware/    Authentication middleware
-views/         EJS templates
-public/        Static assets
-server.js      Application entry point
+models/              MongoDB models
+routes/              Express routes
+views/               EJS pages and partials
+public/css/          Stylesheets
+public/images/       Logo and menu images
+server.js            App entry point
+db.js                MongoDB connection
 ```
 
----
+Menu images are organised by category:
 
-## Installation
-
-Clone the repository:
-
-```bash
-git clone <repository-url>
-cd sharvins-dine-in
+```text
+public/images/main/
+public/images/combo-meals/
+public/images/sides/
+public/images/drinks/
+public/images/coffee/
+public/images/dessert/
 ```
+
+## Local Setup
 
 Install dependencies:
 
@@ -134,48 +89,46 @@ Install dependencies:
 npm install
 ```
 
-Create a .env file:
+Create a `.env` file in the project root:
 
 ```env
-MONGO_URI=your-mongodb-uri
-SESSION_SECRET=your-secret
-ADMIN_EMAIL=admin@example.com
-ADMIN_PASSWORD=your-password
-HOST=0.0.0.0
+MONGO_URI=your-mongodb-connection-string
+SESSION_SECRET=your-long-session-secret
+ADMIN_EMAIL=demo.admin@sharvinsdinein.com
+ADMIN_PASSWORD=DemoAdmin123!
+HOST=127.0.0.1
 PORT=3001
 ```
 
-Start the application:
+Start the app:
 
 ```bash
 npm start
 ```
 
-Open:
+Open the app:
 
 ```text
 http://localhost:3001
 ```
 
----
-
 ## Deployment
 
-The application can be deployed using Render.
+This project is ready to deploy on Render or another Node.js hosting platform.
 
-### Build Command
+Build command:
 
 ```text
 npm install
 ```
 
-### Start Command
+Start command:
 
 ```text
 npm start
 ```
 
-Required environment variables:
+Environment variables needed on the hosting platform:
 
 ```text
 MONGO_URI
@@ -186,39 +139,31 @@ HOST
 PORT
 ```
 
----
-
-## Future Improvements
-
-* Table reservation system
-* Email notifications
-* Online payment integration
-* Loyalty rewards system
-* Analytics dashboard
-* Real-time order tracking
-* Docker support
-
----
-
-## Security
-
-Sensitive information is stored using environment variables.
-
-Never commit:
+For deployment, use:
 
 ```text
-.env
-node_modules/
+HOST=0.0.0.0
 ```
 
-to GitHub.
+Do not upload `.env` to GitHub. Add the environment variables inside the hosting platform dashboard instead.
 
----
+## API Routes
+
+| Method | Route          | Purpose |
+| ------ | -------------- | ------- |
+| GET    | `/api/health`  | Check if the API is running |
+| GET    | `/api/products` | Get menu products |
+| GET    | `/api/my-orders` | Get orders for the logged-in user |
+| GET    | `/api/orders` | Get all orders as admin |
+
+## Security Notes
+
+* Real database credentials must stay inside `.env` or the hosting platform environment settings.
+* `.env` is ignored by Git.
+* Sessions are stored in MongoDB when `MONGO_URI` is set.
+* The demo admin credentials are for project review only.
+* The project does not collect real payment details.
 
 ## Author
 
 Sharvin Puskar Pritvising Chamoo
-
-Full Stack Web Developer
-
-This project was built to strengthen my skills in backend development, database management, authentication, and full-stack web application architecture.

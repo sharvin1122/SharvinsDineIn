@@ -3,18 +3,41 @@
 <main class="receipt-main">
   <section class="receipt-card">
     <div class="receipt-header">
-      <h1>Payment Receipt</h1>
+      <div>
+        <span>Sharvin's Dine In</span>
+        <h1>Payment Receipt</h1>
+      </div>
       <span class="status <%= (order.status || '').toLowerCase() %>"><%= order.status %></span>
     </div>
 
-    <div class="receipt-row">
-      <span>Item</span>
-      <strong><%= order.product ? order.product.name : 'Deleted Product' %></strong>
+    <div class="receipt-meta">
+      <div>
+        <span>Receipt No.</span>
+        <strong><%= String(order._id).slice(-8).toUpperCase() %></strong>
+      </div>
+      <div>
+        <span>Ordered Time</span>
+        <strong><%= order.createdAt ? order.createdAt.toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' }) : '' %></strong>
+      </div>
     </div>
 
-    <div class="receipt-row">
-      <span>Quantity</span>
-      <strong><%= order.quantity %></strong>
+    <div class="receipt-items">
+      <% orderItems.forEach(item => { %>
+        <div class="receipt-item">
+          <div>
+            <strong><%= item.name %></strong>
+            <span>Qty <%= item.quantity %></span>
+            <% if (item.addOns && item.addOns.length > 0) { %>
+              <div class="receipt-addons">
+                <% item.addOns.forEach(addOn => { %>
+                  <span><%= addOn.name %></span>
+                <% }) %>
+              </div>
+            <% } %>
+          </div>
+          <strong>Rs <%= item.lineTotal %></strong>
+        </div>
+      <% }) %>
     </div>
 
     <div class="receipt-row">
@@ -22,12 +45,17 @@
       <strong>Rs <%= order.totalPrice %></strong>
     </div>
 
-    <div class="receipt-row">
-      <span>Date</span>
-      <strong><%= order.createdAt ? order.createdAt.toDateString() : '' %></strong>
-    </div>
+    <% if (order.comment) { %>
+      <div class="receipt-comment">
+        <span>Additional Comment</span>
+        <strong><%= order.comment %></strong>
+      </div>
+    <% } %>
 
     <div class="receipt-actions">
+      <% if (order.status === 'Paid') { %>
+        <a class="btn btn-success" href="/orders/<%= order._id %>/receipt/download">Download Receipt</a>
+      <% } %>
       <a class="btn btn-primary" href="/orders">View Orders</a>
       <a class="btn btn-secondary" href="/">Back to Menu</a>
     </div>

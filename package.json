@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "node server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --check server.js && find routes models -name '*.js' -exec node --check {} \\; && node -e \"const fs=require('fs'); const ejs=require('ejs'); const files=[...fs.readdirSync('views').filter(f=>f.endsWith('.ejs')).map(f=>'views/'+f), ...fs.readdirSync('views/partials').filter(f=>f.endsWith('.ejs')).map(f=>'views/partials/'+f)]; for (const file of files) ejs.compile(fs.readFileSync(file,'utf8'), {filename:file}); console.log(files.length+' ejs files ok');\""
   },
   "repository": {
     "type": "git",
@@ -22,12 +22,13 @@
   "homepage": "https://github.com/sharvin1122/Sharvin-s-Dine-In-Final-Project#readme",
   "dependencies": {
     "bcryptjs": "^3.0.2",
+    "connect-mongo": "^6.0.0",
     "dotenv": "^17.4.2",
     "ejs": "^3.1.10",
     "express": "^5.1.0",
     "express-session": "^1.18.2",
     "mongodb": "^6.19.0",
     "mongoose": "^8.18.1",
-    "multer": "^2.0.2"
+    "multer": "^2.2.0"
   }
 }

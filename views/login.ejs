@@ -1,25 +1,73 @@
 <%- include('partials/header.ejs') %>
 
 <main class="auth-main">
-  <section class="auth-container">
-    <h1>Login</h1>
+  <section class="auth-container login-container">
+    <div class="login-layout">
+      <div>
+        <h1>Login</h1>
 
-    <% if (error) { %>
-      <div class="alert alert-danger"><%= error %></div>
-    <% } %>
+        <% if (error) { %>
+          <div class="alert alert-danger"><%= error %></div>
+        <% } %>
 
-    <form action="/login" method="POST">
-      <label class="form-label" for="email">Email</label>
-      <input class="form-control" id="email" name="email" type="email" required>
+        <form action="/login" method="POST">
+          <label class="form-label" for="email">Email</label>
+          <input class="form-control" id="email" name="email" type="email" required>
 
-      <label class="form-label mt-3" for="password">Password</label>
-      <input class="form-control" id="password" name="password" type="password" required>
+          <label class="form-label mt-3" for="password">Password</label>
+          <input class="form-control" id="password" name="password" type="password" required>
 
-      <button class="btn btn-primary w-100 mt-4" type="submit">Login</button>
-    </form>
+          <button class="btn btn-primary w-100 mt-4" type="submit">Login</button>
+        </form>
+      </div>
+
+      <aside class="demo-access-box">
+        <span class="demo-label">Demo Access for Recruiters</span>
+        <h2>Demo Administrator</h2>
+        <p class="demo-text">Use this test admin account to review the dashboard, products, orders, sales, and reviews.</p>
+
+        <div class="demo-credential-list">
+          <div>
+            <small>Email</small>
+            <strong><%= demoAdmin.email %></strong>
+          </div>
+          <div>
+            <small>Password</small>
+            <strong><%= demoAdmin.password %></strong>
+          </div>
+        </div>
+
+        <button
+          class="btn btn-outline-primary w-100 demo-fill-btn"
+          type="button"
+          data-demo-email="<%= demoAdmin.email %>"
+          data-demo-password="<%= demoAdmin.password %>">
+          Fill Demo Admin Credentials
+        </button>
+
+        <div class="alert alert-warning demo-warning">
+          This demo account is for test data only. Please do not enter real personal or payment information.
+        </div>
+
+        <p class="demo-guest-note">Guest users can register to explore the customer features of the project.</p>
+      </aside>
+    </div>
 
     <p class="auth-switch">Need an account? <a href="/register">Register</a></p>
   </section>
 </main>
+
+<script>
+  document.querySelector('.demo-fill-btn')?.addEventListener('click', function () {
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+
+    if (emailInput && passwordInput) {
+      emailInput.value = this.dataset.demoEmail;
+      passwordInput.value = this.dataset.demoPassword;
+      emailInput.focus();
+    }
+  });
+</script>
 
 <%- include('partials/footer.ejs') %>
