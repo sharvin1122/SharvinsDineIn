@@ -135,13 +135,6 @@ MONGO_URI
 SESSION_SECRET
 ADMIN_EMAIL
 ADMIN_PASSWORD
-HOST
-```
-
-For deployment, use:
-
-```text
-HOST=0.0.0.0
 ```
 
 Do not upload `.env` to GitHub. Add the environment variables inside the hosting platform dashboard instead.

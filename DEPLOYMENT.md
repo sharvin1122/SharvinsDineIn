@@ -25,7 +25,6 @@ MONGO_URI=your MongoDB Atlas connection string
 SESSION_SECRET=a long random session secret
 ADMIN_EMAIL=demo.admin@sharvinsdinein.com
 ADMIN_PASSWORD=DemoAdmin123!
-HOST=0.0.0.0
 ```
 
 Render provides `PORT` automatically, so it does not need to be added manually.
