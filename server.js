@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
-const MongoStore = require('connect-mongo');
+const connectMongo = require('connect-mongo');
 const path = require('path');
 const connectDB = require('./db');
 connectDB();
@@ -13,6 +13,7 @@ const aboutRouter = require('./routes/about');
 const ordersRouter = require('./routes/orders');
 const authRouter = require('./routes/auth');
 const apiRouter = require('./routes/api');
+const MongoStore = connectMongo.MongoStore || connectMongo.default || connectMongo;
 
 server.use(express.urlencoded({ extended: true, limit: '1mb' })); 
 server.use(express.json({ limit: '1mb' }));
