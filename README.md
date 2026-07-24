@@ -4,6 +4,10 @@ Sharvin's Dine In is a full-stack restaurant ordering web app built with Node.js
 
 The project has a customer side for browsing the menu, building an order, paying, and downloading a receipt. It also has an admin dashboard for managing products, orders, sales, and customer reviews.
 
+## Live Demo
+
+https://sharvinsdinein.onrender.com/
+
 ## Main Features
 
 ### Customers
