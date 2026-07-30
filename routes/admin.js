@@ -58,8 +58,16 @@ const upload = multer({
 });
 
 function requireAdmin(req, res, next) {
-  if (!req.session.user || req.session.user.perms !== 'admin') {
+  if (!req.session.user) {
     return res.redirect('/login');
+  }
+
+  if (req.session.user.perms !== 'admin') {
+    return res.status(403).render('error', {
+        status: 403,
+        title: 'Access not allowed',
+        message: 'This page is only available to the administrator.'
+    });
   }
 
   next();
@@ -67,6 +75,21 @@ function requireAdmin(req, res, next) {
 
 function setFlash(req, type, message) {
     req.session.flash = { type, message };
+}
+
+function isDemoAdmin(req) {
+    return req.session.user?.id === 'admin'
+        && req.session.user.email === process.env.ADMIN_EMAIL
+        && process.env.ADMIN_EMAIL === 'demo.admin@sharvinsdinein.com';
+}
+
+function protectDemoAdmin(req, res, next) {
+    if (isDemoAdmin(req)) {
+        setFlash(req, 'warning', 'Demo access is read-only, so this action was not saved.');
+        return res.redirect(req.get('Referrer') || '/admin');
+    }
+
+    next();
 }
 
 function cleanCategory(category, productName = '') {
@@ -111,6 +134,18 @@ function cleanCategory(category, productName = '') {
     return productCategories.includes(category) ? category : 'Main';
 }
 
+function validProductInput(req) {
+    const name = String(req.body.name || '').trim();
+    const price = Number(req.body.price);
+    const stock = Number(req.body.stock);
+
+    if (name.length < 2) return 'Product name is required.';
+    if (!Number.isFinite(price) || price < 0) return 'Product price must be a valid number.';
+    if (!Number.isFinite(stock) || stock < 0) return 'Product stock must be a valid number.';
+
+    return null;
+}
+
 router.get('/', requireAdmin, async (req, res) => {
     try {
         const [items, orders] = await Promise.all([
@@ -140,7 +175,7 @@ router.get('/', requireAdmin, async (req, res) => {
             yearlySales: salesFrom(startOfYear)
         };
 
-        res.render('dashboard', { items, orders, activeOrders, closedOrders, stats });
+        res.render('dashboard', { items, orders, activeOrders, closedOrders, stats, demoMode: isDemoAdmin(req) });
     } catch (err) {
         console.error(err);
         setFlash(req, 'danger', 'Dashboard could not be loaded.');
@@ -159,7 +194,7 @@ router.get('/reviews', requireAdmin, async (req, res) => {
     }
 });
 
-router.post('/reviews/:id/delete', requireAdmin, async (req, res) => {
+router.post('/reviews/:id/delete', requireAdmin, protectDemoAdmin, async (req, res) => {
     try {
         await Review.findByIdAndDelete(req.params.id);
         setFlash(req, 'success', 'Review deleted successfully.');
@@ -171,8 +206,14 @@ router.post('/reviews/:id/delete', requireAdmin, async (req, res) => {
     }
 });
 
-router.post('/add', requireAdmin, upload.single('image'), async (req, res) => {
+router.post('/add', requireAdmin, protectDemoAdmin, upload.single('image'), async (req, res) => {
     try {
+        const inputError = validProductInput(req);
+        if (inputError) {
+            setFlash(req, 'danger', inputError);
+            return res.redirect('/admin');
+        }
+
         const { name, category, price, stock } = req.body;
         const savedCategory = cleanCategory(category, name);
         const imageFolder = imageFolders[savedCategory] || 'main';
@@ -195,7 +236,7 @@ router.post('/add', requireAdmin, upload.single('image'), async (req, res) => {
     }
 });
 
-router.post('/delete/:id', requireAdmin, async (req, res) => {
+router.post('/delete/:id', requireAdmin, protectDemoAdmin, async (req, res) => {
     try {
         await Product.findByIdAndDelete(req.params.id);
         setFlash(req, 'success', 'Product deleted successfully.');
@@ -207,8 +248,14 @@ router.post('/delete/:id', requireAdmin, async (req, res) => {
     }
 });
 
-router.post('/edit/:id', requireAdmin, upload.single('image'), async (req, res) => {
+router.post('/edit/:id', requireAdmin, protectDemoAdmin, upload.single('image'), async (req, res) => {
     try {
+        const inputError = validProductInput(req);
+        if (inputError) {
+            setFlash(req, 'danger', inputError);
+            return res.redirect('/admin');
+        }
+
         const { name, category, price, stock } = req.body;
         const savedCategory = cleanCategory(category, name);
         const imageFolder = imageFolders[savedCategory] || 'main';
@@ -233,7 +280,7 @@ router.post('/edit/:id', requireAdmin, upload.single('image'), async (req, res) 
     }
 });
 
-router.post('/orders/:id/status', requireAdmin, async (req, res) => {
+router.post('/orders/:id/status', requireAdmin, protectDemoAdmin, async (req, res) => {
     try {
         const allowedStatuses = ['Pending', 'Paid', 'Preparing', 'Ready', 'Completed', 'Canceled'];
         const { status } = req.body;

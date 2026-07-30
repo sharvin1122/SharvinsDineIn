@@ -13,7 +13,7 @@ router.get("/", (req, res) => {
 router.post('/review', async (req, res) => {
     try {
         const rating = Number(req.body.rating);
-        const message = String(req.body.message || '').trim();
+        const message = String(req.body.message || '').trim().slice(0, 700);
 
         if (!rating || rating < 1 || rating > 5 || !message) {
             setFlash(req, 'danger', 'Please select a rating and write a review.');

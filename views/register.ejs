@@ -8,21 +8,73 @@
       <div class="alert alert-danger"><%= error %></div>
     <% } %>
 
-    <form action="/register" method="POST">
+    <form action="/register" method="POST" class="js-submit-form">
       <label class="form-label" for="full_name">Full name</label>
-      <input class="form-control" id="full_name" name="full_name" type="text" required>
+      <input class="form-control" id="full_name" name="full_name" type="text" minlength="2" required>
 
       <label class="form-label mt-3" for="email">Email</label>
       <input class="form-control" id="email" name="email" type="email" required>
 
       <label class="form-label mt-3" for="password">Password</label>
-      <input class="form-control" id="password" name="password" type="password" minlength="6" required>
+      <div class="password-field">
+        <input class="form-control" id="password" name="password" type="password" minlength="8" required>
+        <button class="password-toggle" type="button" data-target="password">Show</button>
+      </div>
+      <div class="password-strength" id="passwordStrength">Use at least 8 characters with uppercase, lowercase, and a number.</div>
 
-      <button class="btn btn-primary w-100 mt-4" type="submit">Create Account</button>
+      <button class="btn btn-primary w-100 mt-4 submit-btn" type="submit">
+        <span class="btn-text">Create Account</span>
+        <span class="btn-loading">Creating...</span>
+      </button>
     </form>
 
     <p class="auth-switch">Already have an account? <a href="/login">Login</a></p>
   </section>
 </main>
+
+<script>
+  document.querySelectorAll('.password-toggle').forEach(function (button) {
+    button.addEventListener('click', function () {
+      const input = document.getElementById(this.dataset.target);
+      if (!input) return;
+      input.type = input.type === 'password' ? 'text' : 'password';
+      this.textContent = input.type === 'password' ? 'Show' : 'Hide';
+    });
+  });
+
+  const passwordInput = document.getElementById('password');
+  const strengthText = document.getElementById('passwordStrength');
+
+  passwordInput?.addEventListener('input', function () {
+    const value = this.value;
+    const score = [
+      value.length >= 8,
+      /[A-Z]/.test(value),
+      /[a-z]/.test(value),
+      /[0-9]/.test(value)
+    ].filter(Boolean).length;
+
+    strengthText.className = 'password-strength';
+    if (!value) {
+      strengthText.textContent = 'Use at least 8 characters with uppercase, lowercase, and a number.';
+    } else if (score < 4) {
+      strengthText.classList.add('weak');
+      strengthText.textContent = 'Weak password. Add uppercase, lowercase, and a number.';
+    } else {
+      strengthText.classList.add('strong');
+      strengthText.textContent = 'Strong password.';
+    }
+  });
+
+  document.querySelectorAll('.js-submit-form').forEach(function (form) {
+    form.addEventListener('submit', function () {
+      const button = form.querySelector('.submit-btn');
+      if (button) {
+        button.disabled = true;
+        button.classList.add('is-loading');
+      }
+    });
+  });
+</script>
 
 <%- include('partials/footer.ejs') %>

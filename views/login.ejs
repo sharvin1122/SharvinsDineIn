@@ -5,24 +5,31 @@
     <div class="login-layout">
       <div>
         <h1>Login</h1>
+        <p class="auth-intro">A full-stack restaurant ordering platform with customer ordering, product management, order tracking, analytics, reviews, and downloadable receipts.</p>
 
         <% if (error) { %>
           <div class="alert alert-danger"><%= error %></div>
         <% } %>
 
-        <form action="/login" method="POST">
+        <form action="/login" method="POST" class="js-submit-form">
           <label class="form-label" for="email">Email</label>
           <input class="form-control" id="email" name="email" type="email" required>
 
           <label class="form-label mt-3" for="password">Password</label>
-          <input class="form-control" id="password" name="password" type="password" required>
+          <div class="password-field">
+            <input class="form-control" id="password" name="password" type="password" required>
+            <button class="password-toggle" type="button" data-target="password">Show</button>
+          </div>
 
-          <button class="btn btn-primary w-100 mt-4" type="submit">Login</button>
+          <button class="btn btn-primary w-100 mt-4 submit-btn" type="submit">
+            <span class="btn-text">Login</span>
+            <span class="btn-loading">Logging in...</span>
+          </button>
         </form>
       </div>
 
       <aside class="demo-access-box">
-        <span class="demo-label">Demo Access for Recruiters</span>
+        <span class="demo-label">Demo Access</span>
         <h2>Demo Administrator</h2>
         <p class="demo-text">Use this test admin account to review the dashboard, products, orders, sales, and reviews.</p>
 
@@ -45,8 +52,12 @@
           Fill Demo Admin Credentials
         </button>
 
+        <a class="btn btn-secondary w-100" href="https://github.com/sharvin1122/Sharvin-s-Dine-In-Final-Project" target="_blank" rel="noopener">
+          GitHub Repository
+        </a>
+
         <div class="alert alert-warning demo-warning">
-          This demo account is for test data only. Please do not enter real personal or payment information.
+          This demo account is restricted to protect test data. Please do not enter real personal or payment information.
         </div>
 
         <p class="demo-guest-note">Guest users can register to explore the customer features of the project.</p>
@@ -58,6 +69,25 @@
 </main>
 
 <script>
+  document.querySelectorAll('.password-toggle').forEach(function (button) {
+    button.addEventListener('click', function () {
+      const input = document.getElementById(this.dataset.target);
+      if (!input) return;
+      input.type = input.type === 'password' ? 'text' : 'password';
+      this.textContent = input.type === 'password' ? 'Show' : 'Hide';
+    });
+  });
+
+  document.querySelectorAll('.js-submit-form').forEach(function (form) {
+    form.addEventListener('submit', function () {
+      const button = form.querySelector('.submit-btn');
+      if (button) {
+        button.disabled = true;
+        button.classList.add('is-loading');
+      }
+    });
+  });
+
   document.querySelector('.demo-fill-btn')?.addEventListener('click', function () {
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('password');

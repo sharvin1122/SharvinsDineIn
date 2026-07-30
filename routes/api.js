@@ -16,6 +16,10 @@ function requireApiAdmin(req, res, next) {
     return res.status(403).json({ error: 'Admin access required' });
   }
 
+  if (req.session.user.id === 'admin' && req.session.user.email === process.env.ADMIN_EMAIL && process.env.ADMIN_EMAIL === 'demo.admin@sharvinsdinein.com') {
+    return res.status(403).json({ error: 'Demo admin API access is restricted' });
+  }
+
   next();
 }
 
@@ -28,7 +32,7 @@ router.get('/health', (req, res) => {
 
 router.get('/products', async (req, res) => {
   try {
-    const products = await Product.find().sort({ createdAt: -1 });
+    const products = await Product.find().sort({ createdAt: -1 }).lean();
     res.json(products);
   } catch (err) {
     console.error('API products error:', err);
@@ -40,6 +44,7 @@ router.get('/orders', requireApiAdmin, async (req, res) => {
   try {
     const orders = await Order.find()
       .populate('product')
+      .populate('items.product')
       .populate('user')
       .sort({ createdAt: -1 });
 
@@ -54,6 +59,7 @@ router.get('/my-orders', requireApiUser, async (req, res) => {
   try {
     const orders = await Order.find({ user: req.session.user.id })
       .populate('product')
+      .populate('items.product')
       .sort({ createdAt: -1 });
 
     res.json(orders);

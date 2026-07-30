@@ -7,6 +7,11 @@
       <span>Admin panel</span>
       <h1>Dashboard</h1>
       <p>Manage menu items, stock and customer orders.</p>
+      <% if (demoMode) { %>
+        <div class="alert alert-warning demo-admin-alert">
+          Demo access is read-only, so create, edit, delete, and status changes are not saved.
+        </div>
+      <% } %>
     </div>
     <div class="admin-heading-actions">
       <button id="formBtn" class="btn btn-primary" type="button" onclick="toggleSection('formSection','formBtn','+ Create Product','- Hide Form')">

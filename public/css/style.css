@@ -783,7 +783,12 @@ footer {
 
 .auth-container h1 {
   font-size: 1.75rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.auth-intro {
+  color: var(--color-text-muted);
+  margin: 0 0 1.25rem;
 }
 
 .demo-access-box {
@@ -847,9 +852,100 @@ footer {
   margin: 0;
 }
 
+.password-field {
+  position: relative;
+}
+
+.password-field .form-control {
+  padding-right: 4.5rem;
+}
+
+.password-toggle {
+  background: transparent;
+  border: 0;
+  color: var(--color-accent);
+  font-weight: 850;
+  padding: 0.35rem;
+  position: absolute;
+  right: 0.45rem;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.password-strength {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  margin-top: 0.45rem;
+}
+
+.password-strength.weak {
+  color: #b91c1c;
+}
+
+.password-strength.strong {
+  color: #15803d;
+}
+
+.btn-loading {
+  display: none;
+}
+
+.submit-btn.is-loading .btn-text {
+  display: none;
+}
+
+.submit-btn.is-loading .btn-loading {
+  display: inline;
+}
+
 .auth-switch {
   margin: 1rem 0 0;
   text-align: center;
+}
+
+.error-main {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  min-height: 72vh;
+  padding: 2rem;
+}
+
+.error-card {
+  background: #fffdf8;
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  border-radius: 14px;
+  box-shadow: 0 18px 44px rgba(17, 24, 39, 0.1);
+  max-width: 560px;
+  padding: 2rem;
+  text-align: center;
+  width: 100%;
+}
+
+.error-card span {
+  color: var(--color-accent);
+  font-size: 0.85rem;
+  font-weight: 900;
+}
+
+.error-card h1 {
+  color: var(--color-text-primary);
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  font-weight: 900;
+  margin: 0.5rem 0;
+}
+
+.error-card p {
+  color: var(--color-text-muted);
+  margin: 0 auto 1.25rem;
+  max-width: 420px;
+}
+
+.error-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
 }
 
 .about-main {
@@ -2532,6 +2628,10 @@ body {
   flex-wrap: wrap;
   gap: 0.75rem;
   justify-content: flex-end;
+}
+
+.demo-admin-alert {
+  margin: 1rem 0 0;
 }
 
 .admin-section-head {

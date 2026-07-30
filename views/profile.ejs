@@ -1,0 +1,40 @@
+<%- include('partials/header.ejs') %>
+
+<main class="auth-main">
+  <section class="auth-container">
+    <h1>Profile</h1>
+
+    <% if (error) { %>
+      <div class="alert alert-danger"><%= error %></div>
+    <% } %>
+
+    <form action="/profile" method="POST" class="js-submit-form">
+      <label class="form-label" for="full_name">Full name</label>
+      <input class="form-control" id="full_name" name="full_name" type="text" minlength="2" value="<%= user.full_name %>" required>
+
+      <label class="form-label mt-3" for="email">Email</label>
+      <input class="form-control" id="email" name="email" type="email" value="<%= user.email %>" required>
+
+      <button class="btn btn-primary w-100 mt-4 submit-btn" type="submit">
+        <span class="btn-text">Save Profile</span>
+        <span class="btn-loading">Saving...</span>
+      </button>
+    </form>
+
+    <p class="auth-switch"><a href="/orders">View my orders</a></p>
+  </section>
+</main>
+
+<script>
+  document.querySelectorAll('.js-submit-form').forEach(function (form) {
+    form.addEventListener('submit', function () {
+      const button = form.querySelector('.submit-btn');
+      if (button) {
+        button.disabled = true;
+        button.classList.add('is-loading');
+      }
+    });
+  });
+</script>
+
+<%- include('partials/footer.ejs') %>

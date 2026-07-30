@@ -17,6 +17,14 @@ const MongoStore = connectMongo.MongoStore || connectMongo.default || connectMon
 
 server.use(express.urlencoded({ extended: true, limit: '1mb' })); 
 server.use(express.json({ limit: '1mb' }));
+server.set('trust proxy', 1);
+
+server.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  next();
+});
 
 const sessionSecret = process.env.SESSION_SECRET || (process.env.NODE_ENV === 'production' ? null : 'local-dev-session-secret');
 
@@ -30,7 +38,8 @@ const sessionOptions = {
   saveUninitialized: false,
   cookie: { 
     httpOnly: true,
-    secure: false,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
     maxAge: 1000 * 60 * 60 // 1 hour
   }
 };
@@ -117,15 +126,29 @@ server.use('/about', aboutRouter);
 server.use((err, req, res, next) => {
   console.error(err);
 
-  if (req.session) {
-    req.session.flash = { type: 'danger', message: err.message || 'Something went wrong.' };
+  const status = err.status || 500;
+  const title = status === 403 ? 'Access not allowed' : 'Something went wrong';
+  const message = status === 403
+    ? 'You do not have permission to open this page.'
+    : 'The page could not be loaded right now. Please try again in a moment.';
+
+  if (req.originalUrl.startsWith('/api')) {
+    return res.status(status).json({ error: message });
   }
 
-  res.redirect(req.get('Referrer') || '/');
+  res.status(status).render('error', { status, title, message });
 });
 
 server.use((req, res) => {
-  res.status(404).send('404 Not Found!');
+  if (req.originalUrl.startsWith('/api')) {
+    return res.status(404).json({ error: 'Route not found' });
+  }
+
+  res.status(404).render('error', {
+    status: 404,
+    title: 'Page not found',
+    message: 'The page you are looking for may have been moved or does not exist.'
+  });
 });
 
 const PORT = process.env.PORT || 3001;

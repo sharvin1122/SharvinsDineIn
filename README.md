@@ -13,6 +13,7 @@ https://sharvinsdinein.onrender.com/
 ### Customers
 
 * Register and log in
+* Update a customer profile
 * Browse the menu by category
 * Add mains, combo meals, sides, drinks, coffee, and desserts to the cart
 * Choose add-ons for main items and combo meals
