@@ -12,14 +12,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sharvin1122/Sharvin-s-Dine-In-Final-Project.git"
+    "url": "git+https://github.com/sharvin1122/SharvinsDineIn.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/sharvin1122/Sharvin-s-Dine-In-Final-Project/issues"
+    "url": "https://github.com/sharvin1122/SharvinsDineIn/issues"
   },
-  "homepage": "https://github.com/sharvin1122/Sharvin-s-Dine-In-Final-Project#readme",
+  "homepage": "https://github.com/sharvin1122/SharvinsDineIn#readme",
   "dependencies": {
     "bcryptjs": "^3.0.2",
     "connect-mongo": "^6.0.0",
