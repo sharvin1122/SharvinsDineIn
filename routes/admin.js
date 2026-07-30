@@ -78,9 +78,7 @@ function setFlash(req, type, message) {
 }
 
 function isDemoAdmin(req) {
-    return req.session.user?.id === 'admin'
-        && req.session.user.email === process.env.ADMIN_EMAIL
-        && process.env.ADMIN_EMAIL === 'demo.admin@sharvinsdinein.com';
+    return req.session.user?.id === 'admin' && req.session.user.readOnly !== false;
 }
 
 function protectDemoAdmin(req, res, next) {

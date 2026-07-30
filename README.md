@@ -101,6 +101,7 @@ MONGO_URI=your-mongodb-connection-string
 SESSION_SECRET=your-long-session-secret
 ADMIN_EMAIL=demo.admin@sharvinsdinein.com
 ADMIN_PASSWORD=DemoAdmin123!
+ADMIN_READONLY=true
 HOST=127.0.0.1
 PORT=3001
 ```
@@ -140,6 +141,7 @@ MONGO_URI
 SESSION_SECRET
 ADMIN_EMAIL
 ADMIN_PASSWORD
+ADMIN_READONLY
 ```
 
 Do not upload `.env` to GitHub. Add the environment variables inside the hosting platform dashboard instead.

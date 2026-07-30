@@ -40,6 +40,10 @@ function clearFailedLogin(req, email) {
   loginAttempts.delete(attemptKey(req, email));
 }
 
+function adminReadOnly() {
+  return process.env.ADMIN_READONLY !== 'false';
+}
+
 function loginPageData(error = null) {
   return {
     error,
@@ -73,7 +77,8 @@ router.post('/login', async (req, res) => {
         id: 'admin',
         email,
         full_name: 'Admin',
-        perms: 'admin'
+        perms: 'admin',
+        readOnly: adminReadOnly()
       };
 
       return res.redirect('/admin');

@@ -16,7 +16,7 @@ function requireApiAdmin(req, res, next) {
     return res.status(403).json({ error: 'Admin access required' });
   }
 
-  if (req.session.user.id === 'admin' && req.session.user.email === process.env.ADMIN_EMAIL && process.env.ADMIN_EMAIL === 'demo.admin@sharvinsdinein.com') {
+  if (req.session.user.id === 'admin' && req.session.user.readOnly !== false) {
     return res.status(403).json({ error: 'Demo admin API access is restricted' });
   }
 
